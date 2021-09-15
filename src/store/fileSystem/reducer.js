@@ -2,22 +2,24 @@ import {
   ADD_FOLDER,
   ADD_FILES,
   DELETE_FOLDER,
-  DELETE_FILE
+  DELETE_FILE,
+  RENAME_FILE
 } from "./action";
 //import { simulateWaterFlow } from "./util";
 
 const initialState = [
-  {type:"ROOT", name:"root",children:["rathish"]},
-  {type:"FOLDER", name: "rathish", parent: "root", children:["lol.txt","rohit"]},
-  {type:"FILE", name: "lol.txt", parent: "rathish"},
-  {type:"FOLDER", name: "rohit", parent: "rathish", children:["hh"]},
-  {type:"FILE", name: "hh", parent: "rohit"},
+  {filesys_type:"ROOT", name:"root",children:[]},
+  // {type:"FOLDER", name: "rathish", parent: "root", children:["lol.txt","rohit"]},
+  // {type:"FILE", name: "lol.txt", parent: "rathish"},
+  // {type:"FOLDER", name: "rohit", parent: "rathish", children:["hh"]},
+  // {type:"FILE", name: "hh", parent: "rohit"},
 
 ];
 
 export default function fileSystemReducer(state = initialState, action) {
   switch (action.type) {
     case ADD_FOLDER: {
+      console.log(action)
       const folderName = "New Folder"
       const newstate = state.map((file) => {
         if(file.name === action.rootDir){
@@ -27,7 +29,7 @@ export default function fileSystemReducer(state = initialState, action) {
       })
       return [
         ...newstate,
-        {type:"FOLDER", name:folderName, parent: action.rootDir, children:[]},
+        {filesys_type:"FOLDER", name:folderName, parent: action.rootDir, children:[]},
       ];
     }
     case ADD_FILES: {
@@ -37,22 +39,22 @@ export default function fileSystemReducer(state = initialState, action) {
         }
         return file
       })
-    
+      const currDate = new Date();
       return [
         ...newstate,
         ...(Object.values(action.files)).map(file => {
-          return {type:"FILE", name:file.name, parent: action.rootDir}
+          return {filesys_type:"FILE", parent: action.rootDir, name: file.name, size: file.size, type: file.type, createdDate: `${currDate.getDate()}/${currDate.getMonth()+1}/${currDate.getFullYear()}`}
         })
       ];
     }
     case DELETE_FOLDER: {
       const newstate = state.map((file) => {
         if(file.name === action.rootDir){
-          return {...file, children:file.children.filter(child=> child !==action.fileName)}
+          return {...file, children:file.children.filter(child=> !action.fileNames.includes(child))}
         }
        
         return file;
-      }).filter(file => file.name !== action.fileName && file.parent !== action.fileName )
+      }).filter(file => !action.fileNames.includes(file.name) && !action.fileNames.includes(file.parent) )
       return newstate
     }
     case DELETE_FILE: {
@@ -69,6 +71,29 @@ export default function fileSystemReducer(state = initialState, action) {
         grid: newGrid,
         usedObstructions: [],
       };
+    }
+    case RENAME_FILE: {
+      console.log("hello")
+      console.log(action.oldFileName)
+      const newState = state.map((file) => {
+        if(file.name === action.oldFileName){
+          file["name"] = action.newFileName
+        }
+        if(file.name === action.rootDir){
+          file["children"] = file["children"].map(fileName => {
+            if(fileName === action.oldFileName){
+              return action.newFileName;
+            }
+            return fileName;
+          })
+        }
+        if(action.filesys_type==="FOLDER" && file.parent === action.oldFileName){
+          file.parent = action.newFileName
+        }
+        return file;
+      });
+      console.log(newState)
+      return newState;
     }
    
     default:

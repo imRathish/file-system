@@ -21,8 +21,8 @@ export default function FileList() {
 
   return (
     <div >
-      <Container maxWidth="lg" className={classes.container}>
-        { isExact && <Grid container spacing={3}>
+     { isExact &&  <Container maxWidth="lg" className={classes.container}>
+        <Grid container spacing={5}>
           <Grid item container justify="space-between">
             <Grid item>
               <Actions rootDir={fileName} />
@@ -44,10 +44,10 @@ export default function FileList() {
             
           </Grid>
           
-        </Grid>}
+        </Grid>
        
-      </Container>
-      <Switch>
+      </Container>}
+         <Switch>
               <Route path={`${url}/:fileName`}>
                 <FileList />
               </Route>

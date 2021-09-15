@@ -6,6 +6,10 @@ import Icon from './Icon'
 import { makeStyles } from '@material-ui/core/styles';
 import {useDispatch} from 'react-redux';
 import {addFiles} from '../store/fileSystem/action'
+import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
+import PublishIcon from '@material-ui/icons/Publish';
+import { addFolder } from '../store/fileSystem/action';
+
 const useStyles = makeStyles((theme) => ({
 
     container: {
@@ -26,17 +30,22 @@ export default function FileList(props){
       console.log(e.target.files)
       dispatch(addFiles(e.target.files, rootDir));
     }
+    const handleCreateFolder = () => {
+      console.log(rootDir)
+      dispatch(addFolder(rootDir));
+      //handleClose();
+    }
     return (
         <div >
-            <Grid item container justify="space-between" spacing={2}>
+            <Grid item container alignItems="center" spacing={3}>
               <Grid item>
-                <Typography variant="h4">{rootDir}</Typography>
+                <Typography variant="h6">{rootDir}</Typography>
               </Grid>
               <Grid item>
-                <Button size="small" variant="outlined" >Create Folder</Button>
+                <Button size="small" variant="text" startIcon={<CreateNewFolderIcon style={{color: "#F8D775" }} />} onClick={handleCreateFolder}>New folder</Button>
               </Grid>
               <Grid item>
-                <Button size="small" variant="outlined" onClick={openUploadDialog}>Create File</Button>
+                <Button size="small" variant="text" startIcon={<PublishIcon style={{color: "green" }} />} onClick={openUploadDialog}>Upload File</Button>
               </Grid>
             </Grid>
 

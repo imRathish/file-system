@@ -1,24 +1,11 @@
-export const simulateWaterFlow = (grid, startCell) => {
-  console.log(startCell);
+export const formatBytes = (bytes, decimals = 2) => {
+  if (bytes === 0) return '0 Bytes';
 
-  if (grid[startCell.x][startCell.y] === 0) {
-    grid[startCell.x][startCell.y] = 1;
-  }
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
-  if (startCell.x === grid.length - 1) {
-    return grid;
-  }
-  if (grid[startCell.x + 1][startCell.y] === 0) {
-    return simulateWaterFlow(grid, { x: startCell.x + 1, y: startCell.y });
-  }
-  if (startCell.x !== 0 && grid[startCell.x + 1][startCell.y] === -1) {
-    if (grid[startCell.x][startCell.y + 1] === 0) {
-      grid = simulateWaterFlow(grid, { x: startCell.x, y: startCell.y + 1 });
-    }
-    if (grid[startCell.x][startCell.y - 1] === 0) {
-      grid = simulateWaterFlow(grid, { x: startCell.x, y: startCell.y - 1 });
-    }
-    return grid;
-  }
-  return grid;
-};
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
