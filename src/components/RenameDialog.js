@@ -7,12 +7,35 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {filesys_types} from './Constants';
-
+import {useSelector} from 'react-redux';
+import {generateId} from '../store/fileSystem/util'
 export default function RenameDialog(props) {
-  const {open, fileName, handleClose} = props; 
+  const {open, fileName, url, handleClose} = props; 
   const [newName, setNewName] = React.useState(null);
- 
+  const [error, setError] = React.useState(null);
+  const existingFiles = useSelector(({fileSystem}) => {
+    return fileSystem.map(file => file.id).filter(id => id !== "ROOT")
+  })
 
+  const handCloseDialog = (newName) => {
+    if(newName){
+      if(!isDuplicate(newName)){
+        handleClose(newName);
+        setError(null);
+        return;
+      }else{
+        setError("File/Folder already exists! Give a different name")
+        return;
+      }
+     
+    }
+    setError(null);
+    handleClose()
+  }
+  const isDuplicate = (newName) => {
+    console.log(existingFiles)
+    return existingFiles.includes(generateId(url, newName));
+  }
 
   return (
     <div>
@@ -22,6 +45,8 @@ export default function RenameDialog(props) {
         <DialogContent>
           <TextField
             autoFocus
+            error={error?true:false}
+            helperText={error}
             margin="dense"
             id="new-file-name"
             placeholder={`Enter new name`}
@@ -30,10 +55,10 @@ export default function RenameDialog(props) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>{handleClose()}} color="primary">
+          <Button onClick={()=>{handCloseDialog()}} color="primary">
             Cancel
           </Button>
-          <Button onClick={()=>{handleClose(newName)}} color="primary">
+          <Button onClick={()=>{handCloseDialog(newName)}} color="primary">
             Rename
           </Button>
         </DialogActions>

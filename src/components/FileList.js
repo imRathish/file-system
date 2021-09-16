@@ -17,19 +17,22 @@ const useStyles = makeStyles((theme) => ({
 export default function FileList() {
   const classes = useStyles();
   const { fileName } = useParams();
-  const {url, isExact} = useRouteMatch();
+  const { url, isExact } = useRouteMatch();
 
   return (
     <div >
-     { isExact &&  <Container maxWidth="lg" className={classes.container}>
+      {isExact && <Container maxWidth="lg" className={classes.container}>
         <Grid container spacing={5}>
           <Grid item container justify="space-between">
             <Grid item>
-              <Actions rootDir={fileName} />
+              <Typography variant="h6">{fileName}</Typography>
             </Grid>
             <Grid item>
-              <SearchBox />
+              <Actions rootDir={fileName} url={url} />
             </Grid>
+            {/* <Grid item>
+              <SearchBox />
+            </Grid> */}
           </Grid>
           <Grid item container spacing={5}>
             {/* <Switch>
@@ -41,17 +44,17 @@ export default function FileList() {
                     </Route>
                 </Switch> */}
             <FileView rootdir={fileName} url={url} />
-            
+
           </Grid>
-          
+
         </Grid>
-       
+
       </Container>}
-         <Switch>
-              <Route path={`${url}/:fileName`}>
-                <FileList />
-              </Route>
-            </Switch>        
+      <Switch>
+        <Route path={`${url}/:fileName`}>
+          <FileList />
+        </Route>
+      </Switch>
     </div>
   );
 }

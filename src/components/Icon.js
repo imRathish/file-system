@@ -13,6 +13,8 @@ import { renameFile, deleteFolder } from '../store/fileSystem/action';
 import FileDetails from './FileDetails';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import RenameDialog from './RenameDialog';
+import { useSelector } from 'react-redux';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -26,12 +28,14 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function Icon(props) {
-  const { name, filesys_type  } = props.file;
+  const { id, name, filesys_type, } = props.file;
   const { url, rootdir, isSelectedFile, selectedFiles, updateSelectedFiles } = props;
   const [fileDetailsAnchor, setFileDetailsAnchor] = React.useState(null);
   const [openRenameDialog, setOpenRenameDialog] = React.useState(false);
   const dispatch = useDispatch();
-
+  const fileSystem = useSelector(({ fileSystem }) => {
+    return fileSystem
+  })
   const classes = useStyles();
   const history = useHistory();
   const [cursorPosition, setCursorPosition] = React.useState({
@@ -43,7 +47,7 @@ export default function Icon(props) {
     if (filesys_type === "FILE") {
       return;
     }
-    history.push(url)
+    history.push(`${url}/${name}`)
   }
   const handleClick = (event) => {
     event.preventDefault();
@@ -71,9 +75,9 @@ export default function Icon(props) {
 
   const handleDeleteFolder = () => {
     if(selectedFiles.length>0){
-      dispatch(deleteFolder(selectedFiles, rootdir));
+      dispatch(deleteFolder(selectedFiles, rootdir, url));
     }else{
-      dispatch(deleteFolder([name], rootdir));
+      dispatch(deleteFolder([id], rootdir, url));
     }
     handleClose();
   }
@@ -81,9 +85,9 @@ export default function Icon(props) {
     console.log(event.ctrlKey)
     if(event.ctrlKey && filesys_type!=="FOLDER"){
       if(isSelectedFile){
-        updateSelectedFiles(selectedFiles.filter(fileName => fileName !== name ));
+        updateSelectedFiles(selectedFiles.filter(id => id !== id ));
       }else{
-        updateSelectedFiles([...selectedFiles, name]);
+        updateSelectedFiles([...selectedFiles, id]);
       }
       return;
     }
@@ -95,34 +99,44 @@ export default function Icon(props) {
     setFileDetailsAnchor(null);
   };
   const handleDownload = () => {
-    var element = document.createElement('a');
-    element.setAttribute('href', 
-    `data:${filesys_type};charset=utf-8, `
-    + encodeURIComponent("subbu"));
-    element.setAttribute('download', name);
-  
-  
-    document.body.appendChild(element);
-  
-    element.click();
-  
-    document.body.removeChild(element);
+    if(selectedFiles.length>0){
+      for(const selectedFile of selectedFiles){
+        const fileObj = fileSystem.find(file => file.id===selectedFile);
+        var element = document.createElement('a');
+        element.setAttribute('href', 
+        `data:${fileObj.filesys_type};charset=utf-8, `
+        + encodeURIComponent("Sample"));
+        element.setAttribute('download', fileObj.name);
+      
+      
+        document.body.appendChild(element);
+      
+        element.click();
+      
+        document.body.removeChild(element);
+      }
+    }
+    
   }
   const handleOpenRenameDialog = () => {
     setOpenRenameDialog(true);
+    handleClose();
+    setFileDetailsAnchor(null)
   }
   const handleCloseRenameDialog = (newName) => {
     console.log(newName)
     if(newName){
-      dispatch(renameFile(name, newName, rootdir, filesys_type))
+      dispatch(renameFile(id, newName, rootdir, filesys_type, url))
     }
     setOpenRenameDialog(false);
     handleClose();
+    setFileDetailsAnchor(null)
   }
   const handleClickAway = (event) => {
     if(event.ctrlKey){
       return;
     }
+    setFileDetailsAnchor(null)
     updateSelectedFiles([]);
   }
   return (
@@ -155,7 +169,7 @@ export default function Icon(props) {
 
       </Menu>
       <FileDetails anchor={fileDetailsAnchor} handleClose={handleFileDetailsClose} file={props.file}/>
-      <RenameDialog open={openRenameDialog} handleClose={handleCloseRenameDialog}/>
+      <RenameDialog open={openRenameDialog} handleClose={handleCloseRenameDialog} fileName={name} url={url}/>
     </div>
     </ClickAwayListener>
 

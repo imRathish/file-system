@@ -2,13 +2,12 @@ import {
   ADD_FOLDER,
   ADD_FILES,
   DELETE_FOLDER,
-  DELETE_FILE,
   RENAME_FILE
 } from "./action";
 //import { simulateWaterFlow } from "./util";
-
+import {generateId} from './util'
 const initialState = [
-  {filesys_type:"ROOT", name:"root",children:[]},
+  {filesys_type:"ROOT", id:"ROOT", name:"root",children:[]},
   // {type:"FOLDER", name: "rathish", parent: "root", children:["lol.txt","rohit"]},
   // {type:"FILE", name: "lol.txt", parent: "rathish"},
   // {type:"FOLDER", name: "rohit", parent: "rathish", children:["hh"]},
@@ -19,23 +18,30 @@ const initialState = [
 export default function fileSystemReducer(state = initialState, action) {
   switch (action.type) {
     case ADD_FOLDER: {
-      console.log(action)
-      const folderName = "New Folder"
+      const folderName = "New folder"
+      const newFolderId = generateId(action.parentPath, folderName);
       const newstate = state.map((file) => {
-        if(file.name === action.rootDir){
-          return {...file, children:file.children.concat(folderName)}
+        if(file.id === action.rootDirId){
+          return {...file, children:file.children.concat(newFolderId)}
         }
         return file;
       })
+      const currDate = new Date();
       return [
         ...newstate,
-        {filesys_type:"FOLDER", name:folderName, parent: action.rootDir, children:[]},
+        {filesys_type:"FOLDER", id:newFolderId, name:folderName, parent: action.rootDirId, children:[], createdDate: `${currDate.getDate()}/${currDate.getMonth()+1}/${currDate.getFullYear()}`},
       ];
     }
     case ADD_FILES: {
       const newstate = state.map(file => {
-        if(file.name === action.rootDir){
-          return {...file, children: file.children.concat(...(Object.values(action.files)).map(file => file.name))}
+        if(file.id === action.rootDirId){
+          const fileList = Object.values(action.files)
+          if(fileList.length === 0){
+            return
+          }
+          return {...file, size:(file.size+fileList.reduce((prev, curr) => prev+curr)), children: file.children.concat(...fileList.map(file => {
+            return generateId(action.parentPath, file.name)
+          }))}
         }
         return file
       })
@@ -43,52 +49,44 @@ export default function fileSystemReducer(state = initialState, action) {
       return [
         ...newstate,
         ...(Object.values(action.files)).map(file => {
-          return {filesys_type:"FILE", parent: action.rootDir, name: file.name, size: file.size, type: file.type, createdDate: `${currDate.getDate()}/${currDate.getMonth()+1}/${currDate.getFullYear()}`}
+          return {filesys_type:"FILE", id: generateId(action.parentPath, file.name), parent: action.rootDirId, name: file.name, size: file.size, type: file.type, createdDate: `${currDate.getDate()}/${currDate.getMonth()+1}/${currDate.getFullYear()}`}
         })
       ];
     }
     case DELETE_FOLDER: {
+      console.log(state)
       const newstate = state.map((file) => {
-        if(file.name === action.rootDir){
-          return {...file, children:file.children.filter(child=> !action.fileNames.includes(child))}
+        if(file.id === action.rootDirId){
+          return {...file, children:file.children.filter(child=> !action.fileIds.includes(child))}
         }
        
         return file;
-      }).filter(file => !action.fileNames.includes(file.name) && !action.fileNames.includes(file.parent) )
+      }).filter(file => !action.fileIds.includes(file.id) && !action.fileIds.includes(file.parent) )
       return newstate
     }
-    case DELETE_FILE: {
-      let newGrid = state.grid;
-      for (let i = 0; i < state.rows + 1; i++) {
-        for (let j = 0; j < state.columns; j++) {
-          if (newGrid[i][j] === -1) {
-            newGrid[i][j] = 0;
-          }
-        }
-      }
-      return {
-        ...state,
-        grid: newGrid,
-        usedObstructions: [],
-      };
-    }
+ 
     case RENAME_FILE: {
-      console.log("hello")
-      console.log(action.oldFileName)
       const newState = state.map((file) => {
-        if(file.name === action.oldFileName){
-          file["name"] = action.newFileName
+        if(file.id === action.oldFileId){
+          file.id = action.newFileId;
+          if(file.filesys_type==="FILE"){
+            let extension = file.name.split(".")[1]
+            file.name = `${action.newFileName}.${extension}`
+          }else{
+            file.name = action.newFileName;
+          }
+
         }
-        if(file.name === action.rootDir){
-          file["children"] = file["children"].map(fileName => {
-            if(fileName === action.oldFileName){
-              return action.newFileName;
+        if(file.id === action.rootDirId){
+          file["children"] = file["children"].map(fileId => {
+            if(fileId === action.oldFileId){
+              return action.newFileId;
             }
-            return fileName;
+            return fileId;
           })
         }
-        if(action.filesys_type==="FOLDER" && file.parent === action.oldFileName){
-          file.parent = action.newFileName
+        if(action.filesys_type==="FOLDER" && file.parent === action.oldFileId){
+          file.parent = action.newFileId
         }
         return file;
       });

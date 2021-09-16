@@ -4,27 +4,8 @@ import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
+import {useSelector} from 'react-redux' 
 
-const data = {
-  id: 'root',
-  name: 'Parent',
-  children: [
-    {
-      id: '1',
-      name: 'Child - 1',
-    },
-    {
-      id: '3',
-      name: 'Child - 3',
-      children: [
-        {
-          id: '4',
-          name: 'Child - 4',
-        },
-      ],
-    },
-  ],
-};
 
 const useStyles = makeStyles({
   root: {
@@ -35,14 +16,24 @@ const useStyles = makeStyles({
   },
 });
 
+
 export default function RecursiveTreeView() {
   const classes = useStyles();
+  const filesystem = useSelector(({fileSystem}) => {
+    return fileSystem;
 
-  const renderTree = (nodes) => (
-    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-      {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
+});
+
+
+  const renderTree = (filesystem, rootDir="ROOT") => {
+    const rootDirObj = filesystem.find(file => file.id === rootDir)
+    console.log(rootDirObj)
+    return(
+    <TreeItem key={rootDirObj.id} nodeId={rootDirObj.id} label={rootDirObj.name}>
+      {Array.isArray(rootDirObj.children) ? rootDirObj.children.map((node) => renderTree(filesystem, node)) : null}
     </TreeItem>
-  );
+    )
+  };
 
   return (
     <TreeView
@@ -51,7 +42,7 @@ export default function RecursiveTreeView() {
       defaultExpanded={['root']}
       defaultExpandIcon={<ChevronRightIcon />}
     >
-      {renderTree(data)}
+      {renderTree(filesystem)}
     </TreeView>
   );
 }

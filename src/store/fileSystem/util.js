@@ -9,3 +9,11 @@ export const formatBytes = (bytes, decimals = 2) => {
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+
+export const generateId = (parentPath, fileName) => {
+  if(fileName){
+    return btoa(`${parentPath}/${fileName}`);
+  }else{
+    return btoa(`${parentPath}`);
+  }
+}
