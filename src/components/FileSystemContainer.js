@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function FileList() {
+export default function FileSystemContainer() {
   const classes = useStyles();
   const { fileName } = useParams();
   const { url, isExact } = useRouteMatch();
@@ -50,7 +50,7 @@ export default function FileList() {
       </Container>}
       <Switch>
         <Route path={`${url}/:fileName`}>
-          <FileList />
+          <FileSystemContainer />
         </Route>
       </Switch>
     </div>

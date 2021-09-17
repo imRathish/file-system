@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, CssBaseline } from '@material-ui/core';
-import FileList from './components/FileList'
+import FileSystemContainer from './components/FileSystemContainer'
 import FileTree from './components/FileTree'
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { ROOTNAME } from './Constants'
@@ -45,7 +45,7 @@ function App() {
       <main className={classes.content}>
         <Switch>
           <Route path="/:fileName">
-            <FileList />
+            <FileSystemContainer />
           </Route>
           <Route path="/">
             <Redirect to={"/" + ROOTNAME} />
