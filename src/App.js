@@ -1,10 +1,10 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {Grid, Container, List, Drawer, CssBaseline, Typography } from '@material-ui/core';
+import { Drawer, CssBaseline } from '@material-ui/core';
 import FileList from './components/FileList'
 import FileTree from './components/FileTree'
-import { Switch, Route, Redirect} from 'react-router-dom';
-
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { ROOTNAME } from './Constants'
 const drawerWidth = 300;
 
 const useStyles = makeStyles((theme) => ({
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   drawer: {
     position: 'relative',
     width: drawerWidth,
-    padding:20
+    padding: 20
   },
   content: {
     flexGrow: 1,
@@ -39,18 +39,18 @@ function App() {
           paper: classes.drawer,
         }}
       >
-     
-      <FileTree/>
+
+        <FileTree />
       </Drawer>
       <main className={classes.content}>
-      <Switch>
-                    <Route path="/:fileName">
-                    <FileList/>
-                    </Route>
-                    <Route path="/">
-                        <Redirect to="/root" />
-                    </Route>
-                </Switch>
+        <Switch>
+          <Route path="/:fileName">
+            <FileList />
+          </Route>
+          <Route path="/">
+            <Redirect to={"/" + ROOTNAME} />
+          </Route>
+        </Switch>
       </main>
     </div>
 

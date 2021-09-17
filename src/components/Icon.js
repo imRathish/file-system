@@ -1,19 +1,14 @@
 import React from 'react';
-
-import { Paper } from "@material-ui/core";
+import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import FileDetails from './FileDetails';
+import RenameDialog from './RenameDialog';
+import { renameFile, deleteFolder } from '../store/fileSystem/action';
 import FolderIcon from '@material-ui/icons/Folder';
-import { Grid, Container, List, Drawer, CssBaseline, Typography } from '@material-ui/core';
+import { Grid, Typography, ClickAwayListener, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DescriptionSharpIcon from '@material-ui/icons/DescriptionSharp';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import { useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { renameFile, deleteFolder } from '../store/fileSystem/action';
-import FileDetails from './FileDetails';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import RenameDialog from './RenameDialog';
-import { useSelector } from 'react-redux';
+import { filesys_types } from '../Constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
 }));
-
 
 export default function Icon(props) {
   const { id, name, filesys_type, } = props.file;
@@ -44,7 +38,7 @@ export default function Icon(props) {
   });
 
   const handleDoubleClick = () => {
-    if (filesys_type === "FILE") {
+    if (filesys_type === filesys_types["FILE"]) {
       return;
     }
     history.push(`${url}/${name}`)
@@ -52,7 +46,7 @@ export default function Icon(props) {
   const handleClick = (event) => {
     event.preventDefault();
     setFileDetailsAnchor(null);
-    if(selectedFiles.length>0 && !isSelectedFile){
+    if (selectedFiles.length > 0 && !isSelectedFile) {
       updateSelectedFiles([]);
     }
     if (cursorPosition.mouseX !== 0 || cursorPosition.mouseY !== 0) {
@@ -74,49 +68,53 @@ export default function Icon(props) {
   };
 
   const handleDeleteFolder = () => {
-    if(selectedFiles.length>0){
+    if (selectedFiles.length > 0) {
       dispatch(deleteFolder(selectedFiles, rootdir, url));
-    }else{
+    } else {
       dispatch(deleteFolder([id], rootdir, url));
     }
     handleClose();
   }
   const handleFileDetailsOpen = (event) => {
-    console.log(event.ctrlKey)
-    if(event.ctrlKey && filesys_type!=="FOLDER"){
-      if(isSelectedFile){
-        updateSelectedFiles(selectedFiles.filter(id => id !== id ));
-      }else{
+    if (event.ctrlKey && filesys_type !== filesys_types["FOLDER"]) {
+      if (isSelectedFile) {
+        updateSelectedFiles(selectedFiles.filter(id => id !== id));
+      } else {
         updateSelectedFiles([...selectedFiles, id]);
       }
       return;
     }
-    console.log([name])
-    //updateSelectedFiles([name]);
     setFileDetailsAnchor(event.currentTarget);
   };
   const handleFileDetailsClose = () => {
     setFileDetailsAnchor(null);
   };
+  const download = (selectedFile) => {
+    const fileObj = fileSystem.find(file => file.id === selectedFile);
+    var element = document.createElement('a');
+    element.setAttribute('href',
+      `data:${fileObj.filesys_type};charset=utf-8, `
+      + encodeURIComponent("Sample"));
+    element.setAttribute('download', fileObj.name);
+
+
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
   const handleDownload = () => {
-    if(selectedFiles.length>0){
-      for(const selectedFile of selectedFiles){
-        const fileObj = fileSystem.find(file => file.id===selectedFile);
-        var element = document.createElement('a');
-        element.setAttribute('href', 
-        `data:${fileObj.filesys_type};charset=utf-8, `
-        + encodeURIComponent("Sample"));
-        element.setAttribute('download', fileObj.name);
-      
-      
-        document.body.appendChild(element);
-      
-        element.click();
-      
-        document.body.removeChild(element);
+    handleFileDetailsClose();
+    handleClose();
+    if (selectedFiles.length > 0) {
+      for (const selectedFile of selectedFiles) {
+        download(selectedFile)
       }
+    } else {
+      download(id)
     }
-    
+
   }
   const handleOpenRenameDialog = () => {
     setOpenRenameDialog(true);
@@ -124,8 +122,7 @@ export default function Icon(props) {
     setFileDetailsAnchor(null)
   }
   const handleCloseRenameDialog = (newName) => {
-    console.log(newName)
-    if(newName){
+    if (newName) {
       dispatch(renameFile(id, newName, rootdir, filesys_type, url))
     }
     setOpenRenameDialog(false);
@@ -133,25 +130,31 @@ export default function Icon(props) {
     setFileDetailsAnchor(null)
   }
   const handleClickAway = (event) => {
-    if(event.ctrlKey){
+    if (event.ctrlKey) {
       return;
     }
     setFileDetailsAnchor(null)
     updateSelectedFiles([]);
   }
   return (
-    <ClickAwayListener onClickAway={handleClickAway}>
+    <div>
+      <ClickAwayListener onClickAway={handleClickAway}>
 
-    <div className={classes.root} style={{backgroundColor: isSelectedFile?'#cde7fe':null}} onContextMenu={handleClick} onDoubleClick={handleDoubleClick} onClick={handleFileDetailsOpen} onMouseLeave={handleFileDetailsClose}>
-      <Grid container direction="column" alignItems="center">
-        <Grid item>
-          {filesys_type === "FOLDER" && <FolderIcon style={{ fontSize: 100, color: "#F8D775" }} />}
-          {filesys_type === "FILE" && <DescriptionSharpIcon style={{ fontSize: 100, color: "#7d7d7d" }} />}
-        </Grid>
-        <Grid item>
-          <Typography align="center" variant="caption">{name}</Typography>
-        </Grid>
-      </Grid>
+        <div className={classes.root} style={{ backgroundColor: isSelectedFile ? '#cde7fe' : null }} onContextMenu={handleClick} onDoubleClick={handleDoubleClick} onClick={handleFileDetailsOpen} onMouseLeave={handleFileDetailsClose}>
+          <Grid container direction="column" alignItems="center">
+            <Grid item>
+              {filesys_type === filesys_types["FOLDER"] && <FolderIcon style={{ fontSize: 100, color: "#F8D775" }} />}
+              {filesys_type === filesys_types["FILE"] && <DescriptionSharpIcon style={{ fontSize: 100, color: "#7d7d7d" }} />}
+            </Grid>
+            <Grid item>
+              <Typography align="center" variant="caption">{name}</Typography>
+            </Grid>
+          </Grid>
+
+          <FileDetails anchor={fileDetailsAnchor} handleClose={handleFileDetailsClose} file={props.file} />
+        </div>
+
+      </ClickAwayListener>
       <Menu
         keepMounted
         open={cursorPosition.mouseY !== null}
@@ -163,15 +166,13 @@ export default function Icon(props) {
             : undefined
         }
       >
-        <MenuItem onClick={handleDeleteFolder}>Delete</MenuItem>
-        {selectedFiles.length===0 && <MenuItem onClick={handleOpenRenameDialog}>Rename</MenuItem>}
-        <MenuItem onClick={handleDownload}>Download</MenuItem>
+        <MenuItem id="Delete-file" onClick={handleDeleteFolder}>Delete</MenuItem>
+        {selectedFiles.length === 0 && <MenuItem id="Raname-file" onClick={handleOpenRenameDialog}>Rename</MenuItem>}
+        {filesys_type !== filesys_types["FOLDER"] && <MenuItem id="Download-file" onClick={handleDownload}>Download</MenuItem>}
 
       </Menu>
-      <FileDetails anchor={fileDetailsAnchor} handleClose={handleFileDetailsClose} file={props.file}/>
-      <RenameDialog open={openRenameDialog} handleClose={handleCloseRenameDialog} fileName={name} url={url}/>
-    </div>
-    </ClickAwayListener>
+      <RenameDialog open={openRenameDialog} handleClose={handleCloseRenameDialog} fileName={name} url={url} />
 
+    </div>
   );
 }

@@ -4,61 +4,59 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {filesys_types} from './Constants';
-import {useSelector} from 'react-redux';
-import {generateId} from '../store/fileSystem/util'
+import { useSelector } from 'react-redux';
+import { generateId } from '../store/fileSystem/util';
+
 export default function RenameDialog(props) {
-  const {open, fileName, url, handleClose} = props; 
+  const { open, fileName, url, handleClose } = props;
   const [newName, setNewName] = React.useState(null);
   const [error, setError] = React.useState(null);
-  const existingFiles = useSelector(({fileSystem}) => {
+  const existingFiles = useSelector(({ fileSystem }) => {
     return fileSystem.map(file => file.id).filter(id => id !== "ROOT")
   })
 
   const handCloseDialog = (newName) => {
-    if(newName){
-      if(!isDuplicate(newName)){
+    if (newName) {
+      if (!isDuplicate(newName)) {
         handleClose(newName);
         setError(null);
         return;
-      }else{
+      } else {
         setError("File/Folder already exists! Give a different name")
         return;
       }
-     
+
     }
     setError(null);
     handleClose()
   }
   const isDuplicate = (newName) => {
-    console.log(existingFiles)
     return existingFiles.includes(generateId(url, newName));
   }
 
   return (
     <div>
-      
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+
+      <Dialog open={open} onClose={() => { handCloseDialog(null) }} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">{`Rename ${fileName}`}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
-            error={error?true:false}
+            error={error ? true : false}
             helperText={error}
             margin="dense"
             id="new-file-name"
             placeholder={`Enter new name`}
-           fullWidth
-           onChange={(e)=>{setNewName(e.target.value)}}
+            fullWidth
+            onChange={(e) => { setNewName(e.target.value) }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>{handCloseDialog()}} color="primary">
+          <Button onClick={() => { handCloseDialog(null) }} color="primary">
             Cancel
           </Button>
-          <Button onClick={()=>{handCloseDialog(newName)}} color="primary">
+          <Button onClick={() => { handCloseDialog(newName) }} color="primary">
             Rename
           </Button>
         </DialogActions>
