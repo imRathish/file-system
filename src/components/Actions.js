@@ -23,15 +23,14 @@ export default function Actions(props) {
     let uploaded_files = Object.values(e.target.files);
     if (uploaded_files.length > 0) {
       const existing_files_uploaded = []
-
       uploaded_files = uploaded_files.filter(file => {
-        if (!existingFiles.includes(generateId(url, file.name.split(".")[0]))) {
+        if (!existingFiles.includes(generateId(url, file.name))) {
           return true
         }
         existing_files_uploaded.push(file.name)
       });
       if (existing_files_uploaded.length > 0) {
-        setError("Files exist - " + existingFiles.join(", "))
+        setError("File exists")
       }
       if (uploaded_files.length > 0) {
         dispatch(addFiles(uploaded_files, rootDir, url));
@@ -65,7 +64,7 @@ export default function Actions(props) {
         </Grid>
       </Grid>
 
-      <input id='upload-file' ref={uploadRef} onChange={handleFileChange} type='file' hidden />
+      <input id='upload-file' ref={uploadRef} onChange={handleFileChange} type='file' hidden multiple />
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
