@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Typography, Button } from '@material-ui/core';
+import { Grid, Typography, Button, Divider } from '@material-ui/core';
 import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -78,12 +78,13 @@ export default function RecursiveTreeView() {
       <Grid container direction="column" spacing={2} >
         <Grid item container spacing={3} alignItems="center">
           <Grid item>
-            <StorageIcon style={{ fontSize: 40, color: "green" }} />
+            <StorageIcon style={{ fontSize: 40, color: "#6b96e4" }} />
           </Grid>
           <Grid item>
             <Typography variant="h5">Asset Drive</Typography>
           </Grid>
         </Grid>
+        <Divider/>
         <Grid item>
           <TreeView
             className={classes.root}
