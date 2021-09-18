@@ -1,13 +1,14 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { generateId } from '../store/fileSystem/util'
-import { addFiles } from '../store/fileSystem/action'
-import { addFolder } from '../store/fileSystem/action';
+import { generateId } from '../../utils/util'
+import { addFiles } from '../../store/fileSystem/action'
+import { addFolder } from '../../store/fileSystem/action';
 import { Grid, Button } from '@material-ui/core';
 import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import PublishIcon from '@material-ui/icons/Publish';
 import Snackbar from '@material-ui/core/Snackbar';
-import { NEWFOLDER_NAME } from "../Constants"
+import { NEWFOLDER_NAME } from "../../Constants"
+import SearchBox from './SearchBox';
 export default function Actions(props) {
   const { rootDir, url } = props;
   const dispatch = useDispatch();
@@ -16,9 +17,11 @@ export default function Actions(props) {
   const existingFiles = useSelector(({ fileSystem }) => {
     return fileSystem.map(file => file.id).filter(id => id !== "ROOT")
   })
+
   const openUploadDialog = () => {
     uploadRef.current.click();
   }
+
   const handleFileChange = (e) => {
     let uploaded_files = Object.values(e.target.files);
     if (uploaded_files.length > 0) {
@@ -38,7 +41,6 @@ export default function Actions(props) {
     }
   }
 
-
   const handleCreateFolder = () => {
     if (existingFiles.includes(generateId(url, NEWFOLDER_NAME))) {
       setError(`${NEWFOLDER_NAME} already exists`)
@@ -53,6 +55,7 @@ export default function Actions(props) {
     }
     setError(null);
   };
+
   return (
     <div >
       <Grid item container alignItems="center" spacing={3}>
@@ -61,6 +64,9 @@ export default function Actions(props) {
         </Grid>
         <Grid item>
           <Button size="small" variant="text" startIcon={<PublishIcon style={{ color: "green" }} />} onClick={openUploadDialog}>Upload File</Button>
+        </Grid>
+        <Grid item>
+          <SearchBox />
         </Grid>
       </Grid>
 

@@ -1,14 +1,14 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import FileDetails from './FileDetails';
-import RenameDialog from './RenameDialog';
-import { renameFile, deleteFolder } from '../store/fileSystem/action';
+import FileDetails from '../widgets/FileDetailsPopUp';
+import RenameDialog from '../widgets/RenameDialog';
+import { renameFile, deleteFolder } from '../../store/fileSystem/action';
 import FolderIcon from '@material-ui/icons/Folder';
 import { Grid, Typography, ClickAwayListener, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DescriptionSharpIcon from '@material-ui/icons/DescriptionSharp';
-import { filesys_types } from '../Constants';
+import { filesys_types } from '../../Constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {

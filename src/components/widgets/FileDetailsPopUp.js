@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux'
-import { formatBytes } from '../store/fileSystem/util';
-import { filesys_types } from '../Constants'
+import { formatBytes } from '../../utils/util';
+import { filesys_types } from '../../Constants'
 import { Popover, Typography, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function FileDetails(props) {
+export default function FileDetailsPopUp(props) {
   const classes = useStyles();
   const { anchor, handleClose, file } = props;
   const totalSize = useSelector(({ fileSystem }) => {

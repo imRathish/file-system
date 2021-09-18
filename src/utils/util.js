@@ -1,3 +1,6 @@
+// Utility functions
+
+// Convert bytes into other higher units
 export const formatBytes = (bytes, decimals = 2) => {
   if (bytes === 0) return '0 Bytes';
 
@@ -10,6 +13,7 @@ export const formatBytes = (bytes, decimals = 2) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
+// Generate ID by using base64 encoding
 export const generateId = (parentPath, fileName) => {
   if(fileName){
     return btoa(`${parentPath}/${fileName}`);

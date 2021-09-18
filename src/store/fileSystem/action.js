@@ -1,4 +1,4 @@
-import { generateId } from './util';
+import { generateId } from '../../utils/util';
 import { ROOTNAME } from '../../Constants'
 
 export const ADD_FOLDER = "ADD_FOLDER";

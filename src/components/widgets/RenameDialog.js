@@ -6,7 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useSelector } from 'react-redux';
-import { generateId } from '../store/fileSystem/util';
+import { generateId } from '../../utils/util';
 
 export default function RenameDialog(props) {
   const { open, fileName, url, handleClose } = props;
@@ -36,31 +36,29 @@ export default function RenameDialog(props) {
   }
 
   return (
-    <div>
 
-      <Dialog open={open} onClose={() => { handCloseDialog(null) }} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">{`Rename ${fileName}`}</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            error={error ? true : false}
-            helperText={error}
-            margin="dense"
-            id="new-file-name"
-            placeholder={`Enter new name`}
-            fullWidth
-            onChange={(e) => { setNewName(e.target.value) }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => { handCloseDialog(null) }} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={() => { handCloseDialog(newName) }} color="primary">
-            Rename
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+    <Dialog open={open} onClose={() => { handCloseDialog(null) }} aria-labelledby="form-dialog-title">
+      <DialogTitle id="form-dialog-title">{`Rename ${fileName}`}</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          error={error ? true : false}
+          helperText={error}
+          margin="dense"
+          id="new-file-name"
+          placeholder={`Enter new name`}
+          fullWidth
+          onChange={(e) => { setNewName(e.target.value) }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => { handCloseDialog(null) }} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={() => { handCloseDialog(newName) }} color="primary">
+          Rename
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }

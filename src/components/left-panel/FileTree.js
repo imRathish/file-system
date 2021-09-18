@@ -10,7 +10,8 @@ import TreeItem from '@material-ui/lab/TreeItem';
 import StorageIcon from '@material-ui/icons/Storage';
 import DescriptionSharpIcon from '@material-ui/icons/DescriptionSharp';
 import FolderIcon from '@material-ui/icons/Folder';
-import { filesys_types } from '../Constants';
+import { filesys_types } from '../../Constants';
+import Cloud from '@material-ui/icons/Cloud';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,25 +21,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
-
 export default function RecursiveTreeView() {
   const classes = useStyles();
   const filesystem = useSelector(({ fileSystem }) => {
     return fileSystem;
-
   });
   const history = useHistory();
 
-  const renderIcon = (filesys_type) => {
-    if (filesys_type === "ROOT") {
-      return <StorageIcon />
-    } else if (filesys_type === filesys_types["FILE"]) {
-      return <DescriptionSharpIcon style={{ color: "#7d7d7d" }} />
-    } else if (filesys_type === filesys_types["FOLDER"]) {
-      return <FolderIcon style={{ color: "#F8D775" }} />
-    }
-  }
   const handleItemClick = (file) => {
     if (file.filesys_type === filesys_types["FOLDER"]) {
       history.push(atob(file.id));
@@ -50,6 +39,7 @@ export default function RecursiveTreeView() {
     }
     history.push(atob(file.parent));
   }
+
   const renderTree = (filesystem, rootDir = "ROOT") => {
     const rootDirObj = filesystem.find(file => file.id === rootDir)
     return (
@@ -78,13 +68,13 @@ export default function RecursiveTreeView() {
       <Grid container direction="column" spacing={2} >
         <Grid item container spacing={3} alignItems="center">
           <Grid item>
-            <StorageIcon style={{ fontSize: 40, color: "#6b96e4" }} />
+            <Cloud style={{ fontSize: 40, color: "#6b96e4" }} />
           </Grid>
           <Grid item>
             <Typography variant="h5">Asset Drive</Typography>
           </Grid>
         </Grid>
-        <Divider/>
+        <Divider />
         <Grid item>
           <TreeView
             className={classes.root}
@@ -99,4 +89,14 @@ export default function RecursiveTreeView() {
 
     </div>
   );
+}
+
+const renderIcon = (filesys_type) => {
+  if (filesys_type === "ROOT") {
+    return <StorageIcon />
+  } else if (filesys_type === filesys_types["FILE"]) {
+    return <DescriptionSharpIcon style={{ color: "#7d7d7d" }} />
+  } else if (filesys_type === filesys_types["FOLDER"]) {
+    return <FolderIcon style={{ color: "#F8D775" }} />
+  }
 }

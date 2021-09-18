@@ -1,8 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, CssBaseline } from '@material-ui/core';
-import FileSystemContainer from './components/FileSystemContainer'
-import FileTree from './components/FileTree'
+import FileSystemContainer from './components/main-panel/MainPanelContainer'
+import FileTree from './components/left-panel/FileTree'
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { ROOTNAME } from './Constants'
 const drawerWidth = 300;
@@ -19,7 +19,8 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     height: '100vh',
-    overflow: 'auto',
+    overflowY: 'auto',
+    overflowX: 'hidden'
   },
   appBarSpacer: theme.mixins.toolbar,
   container: {

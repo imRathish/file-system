@@ -3,14 +3,15 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Icon from './Icon'
 import { Grid, Typography } from '@material-ui/core';
-import { generateId } from '../store/fileSystem/util';
-import addFilesImg from '../images/addFiles.png';
-import { ROOTNAME } from '../Constants'
+import { generateId } from '../../utils/util';
+import addFilesImg from '../../images/addFiles.png';
+import { ROOTNAME } from '../../Constants'
 
-export default function FileView(props) {
+export default function FilesView(props) {
     const { rootdir, url } = props
     const [selectedFiles, setSelectedFiles] = React.useState([]);
     const history = useHistory();
+
     const children = useSelector(({ fileSystem }) => {
         const file = fileSystem.find(el => el.id === ((rootdir === ROOTNAME) ? "ROOT" : generateId(url)));
         if (!file) {

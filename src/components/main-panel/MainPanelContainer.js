@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Container, Typography, IconButton } from '@material-ui/core';
-import FileView from './FileView'
+import FileView from './FilesView'
 import { makeStyles } from '@material-ui/core/styles';
 import Actions from './Actions'
 import { Switch, Route, useParams, useRouteMatch, useHistory } from 'react-router-dom';
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function FileSystemContainer() {
+export default function MainPanelContainer() {
   const classes = useStyles();
   const { fileName } = useParams();
   const { url, isExact } = useRouteMatch();
@@ -28,7 +28,7 @@ export default function FileSystemContainer() {
       {isExact && <Container maxWidth="lg" className={classes.container}>
         <Grid container spacing={5}>
           <Grid item container justify="space-between">
-            <Grid item container spacing={3} md={6} alignItems="center">
+            <Grid item container spacing={3} md={3} alignItems="center">
               <Grid item>
                 <IconButton onClick={handleBack}>
                   <ArrowBackIcon />
@@ -50,7 +50,7 @@ export default function FileSystemContainer() {
       </Container>}
       <Switch>
         <Route path={`${url}/:fileName`}>
-          <FileSystemContainer />
+          <MainPanelContainer />
         </Route>
       </Switch>
     </div>
